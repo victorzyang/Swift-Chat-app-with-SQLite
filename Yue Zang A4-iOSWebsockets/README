@@ -1,0 +1,17 @@
+Student Name: Yue Zhang
+Student Number: 100980408
+Data: April 9th, 2018
+
+Online references used
+  1. Starscream (https://github.com/daltoniam/Starscream)
+  2. PopupDialog (https://github.com/Orderella/PopupDialog)
+
+Enhancement: 
+  I've added some popup dialogs to notify users whether 
+the connection to the server is successful or not.
+
+Note: 
+  Since I used Cocoapod as my package manager, 
+in order to open the project properly, you should open the 
+Xcode workspace file (with file extension .xcworkspace), 
+in stead of opening the Xcode project file (with file extension .xcproject)
