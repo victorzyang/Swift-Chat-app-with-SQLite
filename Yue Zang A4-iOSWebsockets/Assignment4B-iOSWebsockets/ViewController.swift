@@ -20,6 +20,8 @@ import PopupDialog
 
 class ViewController: UIViewController, UITableViewDataSource, WebSocketDelegate {
     
+    let db = DBHelper() //Added for thesis
+    
     enum ConnectionType {
         case Connect
         case Disconnet
@@ -69,11 +71,24 @@ class ViewController: UIViewController, UITableViewDataSource, WebSocketDelegate
         }
     }
     
+    //TODO: need to call insert here
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
+        print("Received message: " + text)
+        //I'm not sure how to get the id of a WebSocketClient...
+        
+        //For now, I'll just call them "User"
         if ( !text.contains("Connected to Server") ) {
             messages.append(text)
             updateTableView()
+            
+            let date = Date()
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "dd/MM/yyyy"
+            let datetime = dateFormatter.string(from: date)
+            
+            self.db.insert(user: "User", message: text, datetime: datetime)
         }
+        
     }
     
     func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
@@ -113,6 +128,26 @@ class ViewController: UIViewController, UITableViewDataSource, WebSocketDelegate
             socket.disconnect()
             toggleButtons()
         }
+    }
+    
+    // Display database data
+    @IBAction func displayData(_ sender: UIButton){
+        print("displayData button clicked")
+        let list = self.db.read()
+        var message = ""
+        for index in 0..<list.count{
+            message += "Id: "
+            message += String(list[index].message_id)
+            message += "\nUser: "
+            message += list[index].user!
+            message += "\nMessage: "
+            message += list[index].message!
+            message += "\nDatetime: "
+            message += list[index].datetime!
+            message += "\n\n"
+        }
+        
+        showMessage(title: "Database Data", message: message)
     }
     
     // MARK: TableView Methods
@@ -178,6 +213,24 @@ class ViewController: UIViewController, UITableViewDataSource, WebSocketDelegate
         
         // Present dialog
         self.present(popup, animated: animated, completion: nil)
+    }
+    
+    func showMessage(title: String, message: String){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+            switch action.style{
+                case .default:
+                print("default")
+                
+                case .cancel:
+                print("cancel")
+                
+                case .destructive:
+                print("destructive")
+                
+            }
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
     
 }
