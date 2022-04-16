@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Message: Codable{
+class Message: Codable{ //the Message class represents a new message that is added to the database
     var message_id : Int = 1
     var user : String?
     var message : String?

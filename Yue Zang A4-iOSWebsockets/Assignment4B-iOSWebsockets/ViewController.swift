@@ -20,7 +20,7 @@ import PopupDialog
 
 class ViewController: UIViewController, UITableViewDataSource, WebSocketDelegate {
     
-    let db = DBHelper() //Added for thesis
+    let db = DBHelper() //DBHelper instance for inserting and reading database data. Added for thesis
     
     enum ConnectionType {
         case Connect
@@ -71,22 +71,23 @@ class ViewController: UIViewController, UITableViewDataSource, WebSocketDelegate
         }
     }
     
-    //TODO: need to call insert here
+    //whenever a message is received, database insert method needs to be called here
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
         print("Received message: " + text)
         //I'm not sure how to get the id of a WebSocketClient...
         
-        //For now, I'll just call them "User"
+        //For now, I'll just call all clients "User"
         if ( !text.contains("Connected to Server") ) {
             messages.append(text)
             updateTableView()
             
+            //Get the date of the message (ie. the current date)
             let date = Date()
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "dd/MM/yyyy"
             let datetime = dateFormatter.string(from: date)
             
-            self.db.insert(user: "User", message: text, datetime: datetime)
+            self.db.insert(user: "User", message: text, datetime: datetime) //calls the database insertion method in DBHelper()
         }
         
     }
@@ -133,9 +134,9 @@ class ViewController: UIViewController, UITableViewDataSource, WebSocketDelegate
     // Display database data
     @IBAction func displayData(_ sender: UIButton){
         print("displayData button clicked")
-        let list = self.db.read()
-        var message = ""
-        for index in 0..<list.count{
+        let list = self.db.read() //this returns a list of all the messages in the database
+        var message = "" //this is the variable used to display the list of messages to the UI
+        for index in 0..<list.count{ //iterates through list of messages in chat history to append information to display to the message variable
             message += "Id: "
             message += String(list[index].message_id)
             message += "\nUser: "
@@ -147,7 +148,7 @@ class ViewController: UIViewController, UITableViewDataSource, WebSocketDelegate
             message += "\n\n"
         }
         
-        showMessage(title: "Database Data", message: message)
+        showMessage(title: "Database Data", message: message) //calls function to trigger an alert that displays the database data
     }
     
     // MARK: TableView Methods
@@ -215,6 +216,7 @@ class ViewController: UIViewController, UITableViewDataSource, WebSocketDelegate
         self.present(popup, animated: animated, completion: nil)
     }
     
+    //function for which an alert pops up to display database data
     func showMessage(title: String, message: String){
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in

@@ -11,12 +11,13 @@ import SQLite3
 
 class DBHelper{
     var db : OpaquePointer?
-    var path : String = "chatHistoryDb.sqlite"
+    var path : String = "chatHistoryDb.sqlite" //path of the SQLite database
     init(){
         self.db = createDB()
         self.createTable()
     }
     
+    //function for creating the database
     func createDB() -> OpaquePointer? {
         let filePath = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathExtension(path)
         
@@ -31,6 +32,7 @@ class DBHelper{
         }
     }
     
+    //function for creating the table in the database
     func createTable()  {
         let query = "CREATE TABLE IF NOT EXISTS chatHistory(messageId INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, message TEXT, datetime TEXT)"
         var createTable : OpaquePointer? = nil
@@ -46,6 +48,7 @@ class DBHelper{
         }
     }
     
+    //function for inserting a new game into the database table 'games'
     func insert(user: String, message: String, datetime: String){
         let query = "INSERT INTO chatHistory (messageId, user, message, datetime) VALUES (?, ?, ?, ?)"
         
@@ -75,6 +78,7 @@ class DBHelper{
         }
     }
     
+    //function for querying all data in the database
     func read() -> [Message]{
         var list = [Message]()
         
