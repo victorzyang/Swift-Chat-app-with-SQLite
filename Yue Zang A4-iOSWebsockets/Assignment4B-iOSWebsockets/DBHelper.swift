@@ -23,6 +23,8 @@ class DBHelper{
         
         var db : OpaquePointer? = nil
         
+        print("Creating Database")
+        
         if sqlite3_open(filePath.path, &db) != SQLITE_OK {
             print("There is error in creating DB")
             return nil
@@ -37,6 +39,8 @@ class DBHelper{
         let query = "CREATE TABLE IF NOT EXISTS chatHistory(messageId INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, message TEXT, datetime TEXT)"
         var createTable : OpaquePointer? = nil
         
+        print("Creating Chat table in Database")
+        
         if sqlite3_prepare_v2(self.db, query, -1, &createTable, nil) == SQLITE_OK {
             if sqlite3_step(createTable) == SQLITE_DONE { //table has been created
                 print("Table creation success")
@@ -48,11 +52,13 @@ class DBHelper{
         }
     }
     
-    //function for inserting a new game into the database table 'games'
+    //function for inserting a new message into the database table 'chatHistory'
     func insert(user: String, message: String, datetime: String){
         let query = "INSERT INTO chatHistory (messageId, user, message, datetime) VALUES (?, ?, ?, ?)"
         
         var statement : OpaquePointer? = nil
+        
+        print("Inserting new message into Database table")
         
         var isEmpty = false
         if read().isEmpty{
@@ -80,6 +86,8 @@ class DBHelper{
     
     //function for querying all data in the database
     func read() -> [Message]{
+        print("Selecting all messages from chatHistory table")
+        
         var list = [Message]()
         
         let query = "SELECT * FROM chatHistory;"
