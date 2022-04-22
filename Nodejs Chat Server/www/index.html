@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+    /*
+      Thanks to Cuneyt Celebican in our class for the style sheet
+    */
+    @media (max-width: 700px){
+        body {
+            padding: 15px;
+            margin: 0px;
+        }
+        div#messages>div {
+            background: #e8e8e8;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border-bottom: 1px solid #fafafa;
+        }
+        div#messages>div:first-child {
+            background: #fff;
+            margin-bottom: 20px;
+            padding: 0px;
+        }
+        div#messages>div:last-child {
+            margin-bottom: 20px;
+        }
+        div#messages>div:nth-child(even) {
+            margin-left: 60px;
+        }
+        div#messages>div:nth-child(odd) {
+            margin-right: 60px;
+        }
+        input#msgBox {
+            width: -webkit-calc(100% - 24px);
+            width: -moz-calc(100% - 24px);
+            width: calc(100% - 24px);
+            display: block;
+            padding: 10px;
+        }
+        input[type="button"] {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            background: #0a86e6;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 10px 5px;
+        }
+    }
+  </style>
+  <script>
+    var ws = new WebSocket('ws://' + window.document.location.host);
+
+    ws.onmessage = function(message){
+      var msgDiv = document.createElement('div');
+      msgDiv.innerHTML = message.data;
+      document.getElementById('messages').appendChild(msgDiv);
+    };
+
+    function sendMessage(){
+      var message = document.getElementById('msgBox').value;
+      ws.send(message);
+      document.getElementById('msgBox').value = '';
+    }
+  </script>
+  </head>
+  <body>
+    <h1>Lou's Chat Room</h1>
+    Messages:
+    <div id='messages'></div>
+    <input type='text' placeholder='Send a message' id='msgBox' onkeypress ='return handleKeyPress(event)'>
+    <input type='button' onclick='sendMessage()' value='Send'>
+  </body>
+</html>
